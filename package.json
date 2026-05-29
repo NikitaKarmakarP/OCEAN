@@ -1,0 +1,10 @@
+{
+  "name": "reefscape-ocean-scene-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm run dev --prefix ocean",
+    "build": "npm run build --prefix ocean",
+    "preview": "npm run preview --prefix ocean"
+  }
+}

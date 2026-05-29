@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO Tags -->
+  <title>ReefScape - Interactive Ocean Scene</title>
+  <meta name="description" content="Immerse yourself in a highly responsive, premium interactive ocean scene. Customize schooling tropical fish species, pop floating bubbles, drop organic fish food, toggle storm/night atmospheres, and hear synthesized Web Audio deep-sea soundscapes.">
+  <meta name="keywords" content="Interactive ocean, HTML5 canvas, Boids flocking, Web Audio synthesis, fluid animation, glassmorphism, weather atmosphere, CSS waves">
+  <meta name="author" content="Antigravity Coding Assistant">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Fullscreen Viewport Wrapper -->
+  <div class="ocean-viewport day" id="viewport">
+    
+    <!-- Deep weather atmospheric overlays -->
+    <div class="lightning-flash" id="lightningOverlay"></div>
+    <div class="rain-overlay"></div>
+    <div class="depth-vignette"></div>
+    <div class="caustics-overlay"></div>
+
+    <!-- Surface Waving Water Layers (SVG) -->
+    <div class="waves-container">
+      <!-- Wave 1 (Foreground) -->
+      <svg viewBox="0 0 1200 120" preserveAspectRatio="none" class="wave-layer-1">
+        <path d="M0,60 C150,90 350,30 500,60 C650,90 850,30 1000,60 C1150,90 1300,60 1400,60 L1400,120 L0,120 Z"></path>
+      </svg>
+      <!-- Wave 2 (Middleground) -->
+      <svg viewBox="0 0 1200 120" preserveAspectRatio="none" class="wave-layer-2">
+        <path d="M0,70 C200,40 400,100 600,70 C800,40 1000,100 1200,70 L1200,120 L0,120 Z"></path>
+      </svg>
+      <!-- Wave 3 (Background) -->
+      <svg viewBox="0 0 1200 120" preserveAspectRatio="none" class="wave-layer-3">
+        <path d="M0,80 C250,110 550,50 800,80 C1050,110 1250,80 1400,80 L1400,120 L0,120 Z"></path>
+      </svg>
+    </div>
+
+    <!-- Main Canvas Viewport -->
+    <canvas id="oceanCanvas"></canvas>
+
+    <!-- Floating Interactive Instructions Helper -->
+    <div class="floating-hint">
+      <span>👇</span>
+      <strong>CLICK THE WATER</strong> to drop food & create ripples.
+      <span>|</span>
+      <strong>POP BUBBLES</strong> by clicking them directly!
+    </div>
+
+    <!-- Glassmorphic HUD overlay -->
+    <main class="hud-container">
+      
+      <!-- Top Section: Logo and Real-time Statistics -->
+      <header class="hud-header">
+        <div class="brand-section">
+          <span class="brand-logo" role="img" aria-label="Tropical Fish">🐠</span>
+          <div>
+            <h1 class="brand-title">ReefScape</h1>
+            <span class="status-badge" id="ecoStatus">ECO-DOME ACTIVE</span>
+          </div>
+        </div>
+
+        <!-- Real-time statistics counters -->
+        <aside class="hud-stats-panel" aria-label="Ecosystem Statistics">
+          <div class="stat-item">
+            <span class="stat-val" id="statFish">19</span>
+            <span class="stat-lbl">Creatures</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-val" id="statBubbles">38</span>
+            <span class="stat-lbl">Bubbles</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-val" id="statTemp">26.2°C</span>
+            <span class="stat-lbl">Water Temp</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-val" id="statDepth">45m</span>
+            <span class="stat-lbl">Coral Depth</span>
+          </div>
+        </aside>
+      </header>
+
+      <!-- Bottom Section: Core Glass Control Panel Dashboard -->
+      <section class="hud-controls-panel" id="controlsPanel" aria-label="Ecosystem Dashboard">
+        
+        <!-- Floating toggle handle for the panel -->
+        <button class="panel-toggle-btn" id="btnTogglePanel" aria-label="Toggle Control Panel" aria-expanded="true">
+          <span class="toggle-icon">▼</span>
+          <span class="toggle-text">Hide Controls</span>
+        </button>
+        
+        <!-- Column 1: Species Spawning buttons -->
+        <div class="control-group">
+          <h2 class="group-title">
+            <span role="img" aria-label="Spawn">🧬</span> Spawning Center
+          </h2>
+          <div class="btn-grid">
+            <button class="btn" id="btnClownfish" title="Spawn Orange Clownfish">🧡 Clownfish</button>
+            <button class="btn" id="btnBluetang" title="Spawn Blue Tang">💙 Blue Tang</button>
+            <button class="btn" id="btnYellowtang" title="Spawn Yellow Tang">💛 Yellow Tang</button>
+            <button class="btn" id="btnCoralbeauty" title="Spawn Purple Coral Beauty">💜 Coral Beauty</button>
+            <button class="btn" id="btnJellyfish" title="Spawn Bioluminescent Jellyfish">👾 Jellyfish</button>
+            <button class="btn btn-feed" id="btnFeedAll" title="Feed All Current Fish">🍖 Scatter Fish Food</button>
+          </div>
+        </div>
+
+        <!-- Column 2: Atmospheric Modes & Lighting systems -->
+        <div class="control-group">
+          <h2 class="group-title">
+            <span role="img" aria-label="Weather">⛈️</span> Ecosystem Weather
+          </h2>
+          <div class="mode-selectors">
+            <!-- Day/Night Bioluminescent Toggle -->
+            <div class="mode-row">
+              <div class="mode-info">
+                <span class="mode-name">Bioluminescent Night</span>
+                <span class="mode-desc">Tints colors and ignites glowing coral specs</span>
+              </div>
+              <label class="switch" for="switchDayNight">
+                <input type="checkbox" id="switchDayNight">
+                <span class="slider"></span>
+              </label>
+            </div>
+            
+            <!-- Storm Environment Toggle -->
+            <div class="mode-row">
+              <div class="mode-info">
+                <span class="mode-name">Thunderstorm Mode</span>
+                <span class="mode-desc">High ocean waves, dark clouds & heavy rain</span>
+              </div>
+              <label class="switch" for="switchStorm">
+                <input type="checkbox" id="switchStorm">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Column 3: Web Audio Synth Volumes -->
+        <div class="control-group">
+          <h2 class="group-title">
+            <span role="img" aria-label="Sound">🔊</span> Soundscape Controls
+          </h2>
+          <div class="sound-panel">
+            <!-- Master Mute Toggle -->
+            <div class="mode-row">
+              <div class="mode-info">
+                <span class="mode-name">Enable Audio Synth</span>
+                <span class="mode-desc">Generates deep water soundscapes</span>
+              </div>
+              <label class="switch" for="switchMute">
+                <input type="checkbox" id="switchMute">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <!-- Volume Slider 1: Ambient deep sea wave rumble drone -->
+            <div class="slider-container">
+              <div class="slider-header">
+                <span>Ocean Drone Vol</span>
+              </div>
+              <input type="range" class="range-slider" id="volAmbient" min="0" max="1" step="0.05" value="0.5" aria-label="Ambient volume">
+            </div>
+
+            <!-- Volume Slider 2: Sound effects pops and feeding bell chimes -->
+            <div class="slider-container">
+              <div class="slider-header">
+                <span>Ecosystem FX Vol</span>
+              </div>
+              <input type="range" class="range-slider" id="volFX" min="0" max="1" step="0.05" value="0.5" aria-label="FX volume">
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </main>
+
+  </div>
+
+  <!-- Run JS Coordinator as an ES6 Module -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>

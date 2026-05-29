@@ -1,0 +1,22 @@
+{
+  "name": "reefscape-ocean-scene",
+  "version": "1.0.0",
+  "description": "An interactive 3D-feel Ocean Ecosystem with flocking fish, bubble pops, and synthesized soundscapes using Canvas & Web Audio API.",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "canvas",
+    "boids",
+    "web-audio-api",
+    "interactive-art"
+  ],
+  "author": "Antigravity",
+  "license": "ISC",
+  "devDependencies": {
+    "vite": "^5.2.0"
+  }
+}
