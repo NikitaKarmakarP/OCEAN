@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "npm run dev --prefix ocean",
-    "build": "npm run build --prefix ocean",
+    "build": "npm install --prefix ocean && npm run build --prefix ocean",
     "preview": "npm run preview --prefix ocean"
   }
 }
